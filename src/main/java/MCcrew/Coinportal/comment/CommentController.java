@@ -2,6 +2,7 @@ package MCcrew.Coinportal.comment;
 
 import MCcrew.Coinportal.domain.Dto.CommentDto;
 import MCcrew.Coinportal.domain.Comment;
+import MCcrew.Coinportal.login.JwtService;
 import MCcrew.Coinportal.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -17,21 +18,24 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/comment")
 public class CommentController {
     private final CommentService commentService;
+    private final JwtService jwtService;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public CommentController(CommentService commentService) {
+    public CommentController(CommentService commentService, JwtService jwtService) {
         this.commentService = commentService;
+        this.jwtService = jwtService;
     }
 
     /**
          댓글 달기
      */
     @PostMapping("/")
-    public ResponseEntity<? extends BasicResponse> commentCreateController(@RequestBody CommentDto commentDto){
+    public ResponseEntity<? extends BasicResponse> commentCreateController(@RequestBody CommentDto commentDto, @RequestHeader String jwt){
         logger.info("commentCreateController(): 댓글을 작성합니다.");
-        Comment comment =  commentService.createComment(commentDto);
+        Long userId = userId = jwtService.getUserIdByJwt(jwt);
+        Comment comment =  commentService.createComment(commentDto, userId);
         return ResponseEntity.ok().body(new CommonResponse(comment));
     }
 

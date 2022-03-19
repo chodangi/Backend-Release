@@ -33,11 +33,11 @@ public class CommentService {
     /**
          댓글 생성
     */
-    public Comment createComment(CommentDto commentDto) {
+    public Comment createComment(CommentDto commentDto, Long userId) {
         Comment newComment = new Comment();
         Date date = new Date();
         Post findPost = boardRepository.findById(commentDto.getPostId());
-        User findUser = userRepository.findById(commentDto.getUserId());
+        User findUser = userRepository.findById(userId);
         newComment.setUserId(findUser.getId());
         newComment.setPost(findPost);
         newComment.setNickname(commentDto.getNickname());
