@@ -1,10 +1,15 @@
 package MCcrew.Coinportal.login;
 
+import MCcrew.Coinportal.util.BasicResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -13,6 +18,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 @Slf4j
 @Controller
@@ -72,11 +78,26 @@ public class LoginController {
     }
 
 
+//    /**
+//        로그인 컨트롤러
+//     */
+//    @GetMapping(value = "/login")
+//    public String loginController(@RequestParam("code") String code, RedirectAttributes re){
+//        logger.info("loginController(): 로그인");
+//        String jwt = "";
+//        try{
+//            jwt = loginService.getJwt(code);
+//        }catch(UnsupportedEncodingException e){
+//            logger.error("error message: {}", e.getMessage());
+//        }
+//        re.addAttribute("jwt", jwt);
+//        return "redirect:/main-page";
+//    }
     /**
-        로그인 컨트롤러
+     로그인 컨트롤러
      */
     @GetMapping(value = "/login")
-    public String loginController(@RequestParam("code") String code, RedirectAttributes re){
+    public ResponseEntity<? extends BasicResponse> loginController(@RequestParam("code") String code){
         logger.info("loginController(): 로그인");
         String jwt = "";
         try{
@@ -84,8 +105,10 @@ public class LoginController {
         }catch(UnsupportedEncodingException e){
             logger.error("error message: {}", e.getMessage());
         }
-        re.addAttribute("jwt", jwt);
-        return "redirect:/main-page";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("text", "xml", Charset.forName("UTF-8")));
+        headers.set("jwt", jwt);
+        return new ResponseEntity<>(headers, HttpStatus.OK);
     }
 
     /**
