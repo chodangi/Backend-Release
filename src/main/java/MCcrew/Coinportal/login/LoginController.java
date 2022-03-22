@@ -1,6 +1,8 @@
 package MCcrew.Coinportal.login;
 
+import MCcrew.Coinportal.domain.Dto.JwtDto;
 import MCcrew.Coinportal.util.BasicResponse;
+import MCcrew.Coinportal.util.CommonResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.persistence.Basic;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -105,10 +108,8 @@ public class LoginController {
         }catch(UnsupportedEncodingException e){
             logger.error("error message: {}", e.getMessage());
         }
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("text", "xml", Charset.forName("UTF-8")));
-        headers.set("jwt", jwt);
-        return new ResponseEntity<>(headers, HttpStatus.OK);
+        JwtDto jwtDto = new JwtDto(jwt);
+        return ResponseEntity.ok().body(new CommonResponse<>(jwtDto));
     }
 
     /**
